@@ -1,5 +1,5 @@
 
-# W1: RNA-seq differential expression analysis. Class Excercise
+# W1: RNA-seq differential expression analysis. Class Exercise
 
  > Task: Compare “Results from JCI Insight” vs “Results derived from your own analysis”
 
