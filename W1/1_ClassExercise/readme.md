@@ -5,16 +5,13 @@
 
 ## Overview
 
-Severe COVID-19 disease is associated with dysregulation of the myeloid compartment during acute infection.
+Severe COVID-19 disease is associated with dysregulation of the myeloid compartment during acute infection. To gain further insight into the molecular features of CD14+ monocytes in patients with COVID-19 during acute and convalescent stages, the authors performed global transcriptional profiling.
 
-GSE198256
-
-Data: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE198256  
-MetaData: GEOquery
 
 Dataset: **GSE198256**  
 Paper: **Functional reprogramming of monocytes in patients with acute and convalescent severe COVID-19**
-10.1172/jci.insight.154183
+https://doi.org/10.1172/jci.insight.154183
+
 
 
 |                                      | Number of Samples |                                                                         Samples                                                                        |
