@@ -35,29 +35,29 @@ For the DEG's, for the analysis with DESEQ2 (which the authors also used) we obt
 Regarding the difference between VOOM and TREND,  we obtained a higher number for the downregulated using VOOM, while when using TREND we obtained a higher number for the upregulated.
 
 
+
 |                | **Reported <br>Results** |      **DESEQ2**     |   **LIMMA<br>VOOM**  |  **LIMMA<br>TREND**  |
 |:--------------:|:------------------------:|:-------------------:|:--------------------:|:--------------------:|
-|      Acute     |    184 up<br>155 down    |  418 up<br>855 down |  661 up<br>1011 down |  651 up<br>669 down  |
-| Early Recovery |    318 up<br>203 down    | 506 up<br>4559 down | 1928 up<br>2896 down | 1852 up<br>2825 down |
-|  Late Recovery |      Hardly any DEGs     |   7 up<br>64 down   |  696 up<br>719 down  |  674 up<br>570 down  |
+|      Acute     |    184 up<br>155 down    |  418 up<br>855 down |  332 up<br>629 down |  651 up<br>669 down  |
+| Early Recovery |    318 up<br>203 down    | 506 up<br>4559 down | 1186 up<br>2086 down | 1852 up<br>2825 down |
+|  Late Recovery |      Hardly any DEGs     |   7 up<br>64 down   |  402 up<br>326 down  |  674 up<br>570 down  |
 
 
 ### Biological Interpretation
 
-We performed GSEA analysis using KEGG pathways and for Acute samples we observed that the expression of genes associated NOD-like receptors involved in the regulation of innate immune response were affected in agreement with what the author reported. 
+We performed GSEA analysis using REACTOME pathways using the LIMMA VOOM results. For Acute samples we observed that the expression of genes associated interferon (IFN) pathway that play a critical role in the human immune response were affected. This is in agreement with what the author reported: immune pathways.
 
-For early recovery samples we observed genes asociated with Glioma, Proteasome, 
-Neurotrophin signaling, myeloid leukemia activity. But none were related to what the authos reported: genes encoding chemokines were upregulated, along with important intracellular immunomodulatory proteins and transcription factors. This could be due to the difference in DE method used (Limma Voom vs DESEQ used by the authors)
+For early recovery samples we observed genes asociated with Nuclear Factor Kappa-B (NF-κB) that eventually leads to the production of inflammatory cytokines and NF-kB activation by FCERI that also results in the synthesis of several cytokines. This is in agreement with what the authos reported: genes encoding chemokines were upregulated, along with important intracellular immunomodulatory proteins and transcription factors. 
 
 |                |                                                              Reported Results                                                              |                            My GSEA Results                           |
 |:--------------:|:------------------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------:|
-|      Acute     | immune pathways: antigenic presentation, innate<br>immune responses and MAPK and NF-κ<br>B signallingmetabolic processes: lipid metabolism |                          NOD like receptors                          |
-| Early Recovery |                              wound healing and chemokine activities<br>intracellular immunomodulatory proteins                             | Glioma, Proteasome, <br>Neurotrophin signaling,<br> myeloid leukemia |
+|      Acute     | immune pathways: antigenic presentation, innate<br>immune responses and MAPK and NF-κ<br>B signalling metabolic processes: lipid metabolism |                          Neutrophil degranulation <br>Interferon (IFN) pathway                         |
+| Early Recovery |                              wound healing and chemokine activities<br>intracellular immunomodulatory proteins                             | NFKB activation <br>Neurotrophil degranulation |
+
 <figure>
     <img src="./content/imag/BIOINT.PNG"    
     <figcaption> BubbleGUM gene set enrichment analysis (GSEA) map for each disease state.</figcaption>
 </figure>
-
 
 
 ## Paper Methods 
@@ -78,7 +78,7 @@ Neurotrophin signaling, myeloid leukemia activity. But none were related to what
 
 6. DE analysis
     - Normalization
-    - DE **DESeq2** `P < 0.05` and `|log2 > 2|`
+    - DE **DESeq2** `P < 0.05` and `|log2 > 1|`
 
 
 

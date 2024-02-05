@@ -56,6 +56,7 @@ Group_df <- data.frame(Group)
 Need:
 1. Counts
 2. Sample Info
+
 ```{r Deseq2,warning=FALSE,message=FALSE}
 library(DESeq2)
 
@@ -517,93 +518,6 @@ enrich_plot
 
 ```
 
-
-```{r Run ORA,warning=FALSE,message=FALSE}
-
-# Step 1: determine genes of interest.
-diff_table <- topTable(fit2,coef=1,p.value=0.01,number=10000) 
-genes_dif<- rownames(diff_table)
-
-# Step 2: determine background.
-background_set <- unique(rownames(v))
-
-# Step 3: Determine gene sets.
-#msigdbr_species()
-hs_msigdb_df <- msigdbr(species = "Homo sapiens")
-#head(hs_msigdb_df)
-
-hs_kegg_df <- hs_msigdb_df %>%
-  dplyr::filter(
-    gs_cat == "C2", # This is to filter only to the C2 curated gene sets
-    gs_subcat == "CP:KEGG" # This is because we only want KEGG pathways
-  )
-
-# Step 4: conduct ORA.
-kegg_ora_results <- enricher(
-  gene = genes_dif, # A vector of your genes of interest
-  pvalueCutoff = 0.1, # Can choose a FDR cutoff
-  pAdjustMethod = "BH", # Method to be used for multiple testing correction
-  universe = background_set, # A vector containing your background set genes
-  # The pathway information should be a data frame with a term name or
-  # identifier and the gene identifiers
-  TERM2GENE = dplyr::select(
-    hs_kegg_df,
-    gs_name,
-    human_entrez_gene
-  )
-)
-
-# Step 5: Visualize / explore
-enrich_plot <- enrichplot::dotplot(kegg_ora_results)
-enrich_plot
-
-upset_plot <- enrichplot::upsetplot(kegg_ora_results)
-upset_plot
-```
-
-```{r alternatives to KEGG,}
-
-# Step 6: EXERCISE: alternatives to KEGG?
-msigdbr_collections()
-
-# Step 1: determine genes of interest.
-diff_table <- topTable(fit2,coef=1,p.value=0.01,number=10000) 
-genes_dif<- rownames(diff_table)
-
-# Step 2: determine background.
-background_set <- unique(rownames(v))
-
-# Step 3: Determine gene sets.
-hs_msigdb_df <- msigdbr(species = "Homo sapiens")
-
-hs_kegg_df <- hs_msigdb_df %>%
-  dplyr::filter(
-    gs_cat == "C2", # This is to filter only to the C2 curated gene sets
-    gs_subcat == "CP:REACTOME" # This is because we only want KEGG pathways
-  )
-
-# Step 4: conduct ORA.
-kegg_ora_results <- enricher(
-  gene = genes_dif, # A vector of your genes of interest
-  pvalueCutoff = 0.1, # Can choose a FDR cutoff
-  pAdjustMethod = "BH", # Method to be used for multiple testing correction
-  universe = background_set, # A vector containing your background set genes
-  # The pathway information should be a data frame with a term name or
-  # identifier and the gene identifiers
-  TERM2GENE = dplyr::select(
-    hs_kegg_df,
-    gs_name,
-    human_entrez_gene
-  )
-)
-
-# Step 5: Visualize / explore
-enrich_plot <- enrichplot::dotplot(kegg_ora_results)
-enrich_plot
-
-upset_plot <- enrichplot::upsetplot(kegg_ora_results)
-upset_plot
-```
 ## GSEA
 
 ```{r GSEA cte 1, warning=FALSE, message=FALSE}
