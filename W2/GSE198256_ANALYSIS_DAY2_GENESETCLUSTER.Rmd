@@ -877,8 +877,8 @@ GSEA_Hvs6Mo <- doGSEA(Diff_Hvs6Mo)
 
 path <- "/Users/gonzalac/Desktop/PhD_2nd/BESE398_Pipelines/Bioinformatics_Pipelines/W2"
 
-write.csv(GSEA_HvsAI, file = paste0(path, "/GSEA_HvsAI.csv"), row.names = FALSE)
-write.csv(GSEA_Hvs6Mo, file = paste0(path, "/GSEA_Hvs6Mo.csv"), row.names = FALSE)
+write.csv(GSEA_HvsAI, file = paste0(path, "/data/GSEA_HvsAI.csv"), row.names = FALSE)
+write.csv(GSEA_Hvs6Mo, file = paste0(path, "/data/GSEA_Hvs6Mo.csv"), row.names = FALSE)
 ```
 
 
@@ -886,7 +886,7 @@ write.csv(GSEA_Hvs6Mo, file = paste0(path, "/GSEA_Hvs6Mo.csv"), row.names = FALS
 
 library(GeneSetCluster)
 path <- "/Users/gonzalac/Desktop/PhD_2nd/BESE398_Pipelines/Bioinformatics_Pipelines/W2"
-GSEA.files <- list.files("./", pattern = ".csv")
+GSEA.files <- list.files("./data", pattern = ".csv")
 
 
 # Load the data and create Pathway object
