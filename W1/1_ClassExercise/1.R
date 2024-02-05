@@ -339,12 +339,14 @@ require(edgeR)
 dge <- DGEList(counts=GSE198256_count)
 design <- model.matrix(~ pDataUSE[,1] )
 
+
 # Filter
 keep <- filterByExpr(dge, design=design)
 dge <- dge[keep,,keep.lib.sizes=FALSE]
 
 # Normalization
 dge <- calcNormFactors(dge)
+dge$samples$norm.factors
 
 ############
 # STEP 3.1 LIMMA: TREND
@@ -352,6 +354,7 @@ dge <- calcNormFactors(dge)
 logCPM <- cpm(dge, log=TRUE, prior.count=3)
 fit <- lmFit(logCPM, design)
 fit <- eBayes(fit, trend=TRUE)
+plotSA(fit, main = "Final model: Mean-variance Trend")
 topTable(fit, coef=ncol(design))
 
 ############
@@ -422,7 +425,7 @@ dotplot(filteredEgo)
 
 # 3 APPROACH 2: Gene SET Enrichment (no treshold)-------------------------------------------------------
 res <- results(GSE198256_DESeq2_F, contrast=c('Group','Controls','EarlyRecovery')) ##EarlyRecovery  ##Acute
-               
+
 #filtered_res <- res[!is.na(res$log2FoldChange) & 
 #                     !is.na(res$pvalue) &  !is.na(res$padj)   &                       
 #                     (abs(res$log2FoldChange) > 1) &                            
