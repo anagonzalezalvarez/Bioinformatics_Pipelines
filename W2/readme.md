@@ -54,7 +54,7 @@ Neurotrophin signaling, myeloid leukemia activity. But none were related to what
 |      Acute     | immune pathways: antigenic presentation, innate<br>immune responses and MAPK and NF-κ<br>B signallingmetabolic processes: lipid metabolism |                          NOD like receptors                          |
 | Early Recovery |                              wound healing and chemokine activities<br>intracellular immunomodulatory proteins                             | Glioma, Proteasome, <br>Neurotrophin signaling,<br> myeloid leukemia |
 <figure>
-    <img src="./content/imag/BIOINT.png"    
+    <img src="./content/imag/BIOINT.PNG"    
     <figcaption> BubbleGUM gene set enrichment analysis (GSEA) map for each disease state.</figcaption>
 </figure>
 
