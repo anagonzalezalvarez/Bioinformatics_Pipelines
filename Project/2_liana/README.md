@@ -1,12 +1,22 @@
 
-## Overview Liana
+# Liana 
 
+## Content
 
-Liana has 2 main steps
-### 1. `liana_wrap()`
-### 2. `liana_aggregate()`
+```
+2_liana
+  ├── README.md
+  ├── code
+  │   ├── 03_liana_bootstrapping_P10.R
+  │   ├── 03_liana_bootstrapping_P28.R
+  │   └── bootstrapping_functions.R
+  ├── content
+  ├── imag
+  └── results
+```
 
-## Workflow
+## Liana Workflow
+
 
 ### 1. Load annotated Seurat Object
 
@@ -37,9 +47,9 @@ Sst <- subset(p10, predicted.subclass == "Sst")
 
 ### 3. Bootstapping 
 
-1. Sample n cells 100 times (or the number you want) and create a list for each cell subtype of interest
+1. Sample n cells m times (in this analysis, m=100) and create a list for each cell subtype of interest
 2. Loop 100 times and merge one item of the list per subtype of interest 
-3. Call `liana_wrap` on this 100 merged objects using 3 methods: call_cellchat,cellphonedb, and sca
+3. Call `liana_wrap` on this 100 merged objects using 3 methods: `call_cellchat`, `cellphonedb`, and `sca`
 
 Output from this step is an object that contains the results of the 100 tests using the 3 methods 
 ```
@@ -86,7 +96,7 @@ Output from this step is an object that contains the results of the 100 tests us
 
 ### 4. Remove self interactions `bootstrap_keep_dir`
 
-Iterate through 3 different resoruces (cellchat, cellphone, sca) in the list of 100 items and remove the rows where `source == target` (it means the interaction is coming from and going to the same cell and in this analysis we are not interested in those kind of interactions)
+Iterate through 3 different methods results (`call_cellchat`, `cellphonedb`, and `sca`) in the list of 100 items and remove the rows where `source == target`. This means that the interaction originates from and targets the same cell, and in this analysis, we are not interested in those types of interactions.
 
 We only keep interactions from one cell to another. This are the 6 possible combiantions we have:
 
@@ -149,6 +159,7 @@ Now we have 100 tibbles like this with the aggregated score for the 3 methods us
 
 ### 7. Add column with string source-target-ligand-receptor `add_inter_col`
 
+To be able to differentiate interaction direction we add column with string source-target-ligand-receptor
 ```
 > Lamp5_Sst_bootstrap_agg[[1]] %>%
 print(width=Inf)
@@ -195,14 +206,63 @@ print(width=Inf)
 `aggregate_rank < 0.01`
 
 ### 9. Get vector with all possible interactions predicted in the 100 runs and get the percentage of presence in the bootstrapped results
-- Separate interactions going from cell1 -> cell2 vs cell1 <- cell2
 
-### 10. Keep only interactions above 75% of the 100 predictions
 
+1. For each cell combination we get all possible interactions `interactions_vector`
+```
+> Lamp5_Sst_interactions
+ [1] "Sst-Lamp5-Nrg3-Egfr"     "Lamp5-Sst-L1cam-Cntn1"  
+ [3] "Sst-Lamp5-L1cam-Egfr"    "Sst-Lamp5-Tnr-Itga9"    
+ [5] "Sst-Lamp5-Sema3a-Nrp2"   "Sst-Lamp5-Lama4-Itga9"  
+ [7] "Sst-Lamp5-Nxph1-Nrxn1"   "Lamp5-Sst-Jam3-Itgb1"   
+ [9] "Lamp5-Sst-Vegfc-Itgb1"   "Sst-Lamp5-Vegfc-Itgb1"  
+```
+
+2. For each interaction we get the percentage of times it appears in the 100 tests we did `check_inter`
+```
+> robust_Lamp5_Sst
+              interactions percentage
+1      Sst-Lamp5-Nrg3-Egfr        100
+2    Lamp5-Sst-L1cam-Cntn1         99
+3     Sst-Lamp5-L1cam-Egfr         99
+4      Sst-Lamp5-Tnr-Itga9        100
+5    Sst-Lamp5-Sema3a-Nrp2         93
+```
+
+
+3. Separate interactoins going from cell1 -> cell2 vs cell1 <- cell2 
+```
+robust_Lamp5toSst <- robust_Lamp5_Sst[startsWith(robust_Lamp5_Sst$interactions, "L"), ] 
+robust_SsttoLamp5 <- robust_Lamp5_Sst[startsWith(robust_Lamp5_Sst$interactions, "S"), ] 
+```
+
+
+### 10. Keep only interactions that appeared above treshold set
+
+```
+robust_Lamp5toSst_vecfilt <- subset(robust_Lamp5toSst, subset = robust_Lamp5toSst$percentage >= 75)
+robust_SsttoLamp5_vecfilt <- subset(robust_SsttoLamp5, subset = robust_SsttoLamp5$percentage >= 75)
+```
 ![picture alt](./content/bootstrap.png)
+
+
+### 11. Subset the bootstrapped results for cell direction and then randomly select 1 out of the 100 results predicted `keep_specific_inter`
+
+```
+robust_Lamp5toSst_agg <- keep_specific_inter(Lamp5_Sst_bootstrap_agg_filt, robust_Lamp5toSst_vecfilt$interactions) 
+robust_Lamp5toSst_agg_df <- robust_Lamp5toSst_agg[[sample(1:100, 1)]]
+```
+
+### 12. Plot and explore results
+![picture alt](./content/heatmap.png)
+
+### 13. Biological Interpretation
 
 
 ## References
 
-Tutorial https://saezlab.github.io/liana/articles/liana_tutorial.html
+
+Installation: https://saezlab.github.io/liana/  
+Paper: https://www.biorxiv.org/content/10.1101/2023.08.19.553863v1.full  
+Tutorial: https://saezlab.github.io/liana/articles/liana_tutorial.html
 
