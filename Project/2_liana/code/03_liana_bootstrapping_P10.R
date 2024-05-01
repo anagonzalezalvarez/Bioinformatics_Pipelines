@@ -1,5 +1,5 @@
 # libraries 
-#remotes::install_github('saezlab/liana', force = T)
+remotes::install_github('saezlab/liana', force = T)
 #remotes::install_github("sqjin/CellChat")
 
 

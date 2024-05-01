@@ -1,27 +1,31 @@
 # libraries
+# install.packages("ggVennDiagram")
+# BiocManager::install("pathview")
+
 library(ggVennDiagram)
 library(DOSE)
 library(clusterProfiler)
 library("org.Mm.eg.db")
 library("pathview")
+library(ggplot2)
 
 
 ### SET WORKING SPACE ------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-analysis_name <- "functional_charcterization_Sst_Pvalb" 
-path_imag <- paste0(basepath,"/code/",analysis_name,"/imag/")
-path_dir <- paste0(basepath,"/code/",analysis_name,"/")
+basepath <- "/Users/gonzalac/Desktop/PhD_2nd/BESE398_Pipelines/Bioinformatics_Pipelines/Project/"
+analysis_name <- "3_functionalcharacterization" 
+path_imag <- paste0(basepath,analysis_name,"/imag/")
+path_dir <- paste0(basepath,analysis_name,"/")
 
 ### Create it if it doesn't exist
 dir.create(path_dir, showWarnings = FALSE)
 dir.create(path_imag, showWarnings = FALSE)
 setwd(path_imag)
 
-
 ### 1. Load LIANA outputs of final (robust) interactions  ------------------------------------------------------------------------------------------------------------------------
-robust_all_df_p10 <- read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/BESE394/Final/Data/robust_all_df_p10.csv"); robust_all_df_p10 <- robust_all_df_p10[-1]
-robust_all_df_p28 <- read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/BESE394/Final/Data/robust_all_df_p28.csv"); robust_all_df_p28 <- robust_all_df_p28[-1]
+robust_all_df_p10 <- read.csv(paste0(basepath, "2_liana/results/robust_all_df_p10.csv")); robust_all_df_p10 <- robust_all_df_p10[-1]
+robust_all_df_p28 <- read.csv(paste0(basepath, "2_liana/results/robust_all_df_p28.csv")); robust_all_df_p28 <- robust_all_df_p28[-1]
 
+head(robust_all_df_p10)
 
 ### 2. Create separate objects for interactions of sub-types of interest, considering the direction of interactions ---------------------------------------------------------------
 SSTtoPVALB_p10 <- subset(robust_all_df_p10, robust_all_df_p10$source == "Sst" & robust_all_df_p10$target == "Pvalb")
@@ -33,17 +37,18 @@ PVALBtoSST_p28 <- subset(robust_all_df_p28, robust_all_df_p28$source == "Pvalb" 
 
 ### 3. Plotting VennDiagram to visualize the number of unique and shared interactions (across the two stages of developemnt; p10 and p28)  -------------------------------------------------------------------------------------------
 #--- Sst -> Pvalb 
-x <- list(p10 = SSTtoPVALB_p10_vectors,
-          p28 = SSTtoPVALB_p28_vectors)
+pdf("1_vendiagram_interactions_SSTtoPVALB.pdf")
+x <- list(p10 = SSTtoPVALB_p10,
+          p28 = SSTtoPVALB_p28)
 ggVennDiagram(x[1:2], label = "count", label_alpha = 0, set_size = 6,label_size = 6) + 
   scale_fill_gradient(low = "#F4FAFE", high = "maroon2") +  theme(legend.title = element_text(color = "black"), legend.position = "bottom") + coord_flip()
 
 #--- Pvalb -> Sst
-x <- list(p10 = PVALBtoSST_p10_vectors,
-          p28 = PVALBtoSST_p28_vectors)
+x <- list(p10 = SSTtoPVALB_p10,
+          p28 = SSTtoPVALB_p28)
 ggVennDiagram(x[1:2], label = "count", label_alpha = 0, set_size = 6,label_size = 6) + 
   scale_fill_gradient(low = "#F4FAFE", high = "maroon2") +  theme(legend.title = element_text(color = "black"), legend.position = "bottom") + coord_flip()
-
+dev.off()
 
 
 ### 4. Subseting LIANA output for unique and shared interactions (across the two stages of developemnt; p10 and p28) -------------------------------------------------------------------------------------------

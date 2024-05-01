@@ -1,27 +1,36 @@
 # libraries
+# install.packages("ggVennDiagram")
+# BiocManager::install("pathview")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+if (!requireNamespace("remotes", quietly = TRUE))
+    install.packages("remotes")
+
+remotes::install_github('saezlab/liana')
 library(ggVennDiagram)
 library(DOSE)
 library(clusterProfiler)
 library("org.Mm.eg.db")
 library("pathview")
-
+library(ggplot2)
+library(liana)
 
 ### SET WORKING SPACE ------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-analysis_name <- "functional_charcterization_Sst_Vip" 
-path_imag <- paste0(basepath,"/code/",analysis_name,"/imag/")
-path_dir <- paste0(basepath,"/code/",analysis_name,"/")
+basepath <- "/Users/gonzalac/Desktop/PhD_2nd/BESE398_Pipelines/Bioinformatics_Pipelines/Project/"
+analysis_name <- "3_functionalcharacterization" 
+path_imag <- paste0(basepath,analysis_name,"/imag/SST_VIP")
+path_dir <- paste0(basepath,analysis_name,"/")
 
 ### Create it if it doesn't exist
 dir.create(path_dir, showWarnings = FALSE)
 dir.create(path_imag, showWarnings = FALSE)
 setwd(path_imag)
 
-
 ### 1. Load LIANA outputs of final (robust) interactions  ------------------------------------------------------------------------------------------------------------------------
-robust_all_df_p10 <- read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/BESE394/Final/Data/robust_all_df_p10.csv"); robust_all_df_p10 <- robust_all_df_p10[-1]
-robust_all_df_p28 <- read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/BESE394/Final/Data/robust_all_df_p28.csv"); robust_all_df_p28 <- robust_all_df_p28[-1]
-
+robust_all_df_p10 <- read.csv(paste0(basepath, "2_liana/results/robust_all_df_p10.csv")); robust_all_df_p10 <- robust_all_df_p10[-1]
+robust_all_df_p28 <- read.csv(paste0(basepath, "2_liana/results/robust_all_df_p28.csv")); robust_all_df_p28 <- robust_all_df_p28[-1]
+head(robust_all_df_p10)
 
 
 ### 2. Create separate objects for interactions of sub-types of interest, considering the direction of interactions ---------------------------------------------------------------
@@ -31,41 +40,54 @@ VIPtoSST_p10 <- subset(robust_all_df_p10, robust_all_df_p10$source == "Vip" & ro
 VIPtoSST_p28 <- subset(robust_all_df_p28, robust_all_df_p28$source == "Vip" & robust_all_df_p28$target == "Sst")
 
 
-
 ### 3. Plotting VennDiagram to visualize the number of unique and shared interactions (across the two stages of developemnt; p10 and p28)  -------------------------------------------------------------------------------------------
 #--- Sst -> Vip 
 x <- list(p10 = SSTtoVIP_p10$interaction,
           p28 = SSTtoVIP_p28$interaction)
-ggVennDiagram(x[1:2], label = "count", label_alpha = 0, set_size = 6,label_size = 6) + 
+plot1 <- ggVennDiagram(x[1:2], label = "count", label_alpha = 0, set_size = 6,label_size = 6) + 
   scale_fill_gradient(low = "#F4FAFE", high = "maroon2") +  theme(legend.title = element_text(color = "black"), legend.position = "bottom") + coord_flip()
 #----  Vip -> Sst
 x <- list(p10 = VIPtoSST_p10$interaction,
           p28 = VIPtoSST_p28$interaction)
-ggVennDiagram(x[1:2], label = "count", label_alpha = 0, set_size = 6,label_size = 6) + 
+plot2 <- ggVennDiagram(x[1:2], label = "count", label_alpha = 0, set_size = 6,label_size = 6) + 
   scale_fill_gradient(low = "#F4FAFE", high = "maroon2") +  theme(legend.title = element_text(color = "black"), legend.position = "bottom") + coord_flip()
 
+# Save the plots to PDF
+ggsave("1_vendiagram_interactions_SSTtoVIP_plot1.pdf", plot1, width = 8, height = 6)
+ggsave("1_vendiagram_interactions_VIPtoSST_plot2.pdf", plot2, width = 8, height = 6)
 
 
 ### 4. Subseting LIANA output for unique and shared interactions (across the two stages of developemnt; p10 and p28) -------------------------------------------------------------------------------------------
 #--- SST to VIP
+
+## UNIQUE to p10 (left side of ven plot = 2)
 unique_pairs_SSTtoVIP_p10_inter <- Reduce(setdiff, list(A = SSTtoVIP_p10$interaction, B = SSTtoVIP_p28$interaction))
 unique_pairs_SSTtoVIP_p10_df <- subset(SSTtoVIP_p10, SSTtoVIP_p10$interaction %in% unique_pairs_SSTtoVIP_p10_inter)
+
+## UNIQUE to p28 (right side of ven = 31)
 unique_pairs_SSTtoVIP_p28_inter <- Reduce(setdiff, list(A = SSTtoVIP_p28$interaction, B = SSTtoVIP_p10$interaction))
 unique_pairs_SSTtoVIP_p28_df <- subset(SSTtoVIP_p28, SSTtoVIP_p28$interaction %in% unique_pairs_SSTtoVIP_p28_inter)
+
+## SHARED (middle of ven = 3)
 unique_pairs_SSTtoVIP_shared_inter <- intersect(SSTtoVIP_p10$interaction, SSTtoVIP_p28$interaction)
 unique_pairs_SSTtoVIP_shared_df <- subset(SSTtoVIP_p28, SSTtoVIP_p28$interaction %in% unique_pairs_SSTtoVIP_shared_inter)
+
 #--- VIP to SST 
+## UNIQUE to p10 (left side of ven plot = 3)
 unique_pairs_VIPtoSST_p10_inter <- Reduce(setdiff, list(A = VIPtoSST_p10$interaction, B = VIPtoSST_p28$interaction))
 unique_pairs_VIPtoSST_p10_df <- subset(VIPtoSST_p10, VIPtoSST_p10$interaction %in% unique_pairs_VIPtoSST_p10_inter)
+
+## UNIQUE to p28 (right side of ven plot = 18)
 unique_pairs_VIPtoSST_p28_inter <- Reduce(setdiff, list(A = VIPtoSST_p28$interaction, B = VIPtoSST_p10$interaction))
 unique_pairs_VIPtoSST_p28_df <- subset(VIPtoSST_p28, VIPtoSST_p28$interaction %in% unique_pairs_VIPtoSST_p28_inter)
 
+## in this direction no SHARED interactions
 
 
 ### 5. Plotting dotplots for unique and shared interactions (across the two stages of developemnt; p10 and p28) -------------------------------------------------------------------------------------------
 #--- SST to VIP
-names(unique_pairs_SSTtoVIP_p10_df)[3] <- paste("ligand.complex") 
-names(unique_pairs_SSTtoVIP_p10_df)[4] <- paste("receptor.complex")
+names(unique_pairs_SSTtoVIP_p10_df)[3] <- paste("ligand.complex")  ### rename cols ligand to ligand.complex
+names(unique_pairs_SSTtoVIP_p10_df)[4] <- paste("receptor.complex") 
 liana_dotplot(unique_pairs_SSTtoVIP_p10_df, specificity = "cellphonedb.pvalue", source_groups = c("Sst", "Vip"), target_groups =  c("Sst", "Vip"))
 
 names(unique_pairs_SSTtoVIP_shared_df)[3] <- paste("ligand.complex")
