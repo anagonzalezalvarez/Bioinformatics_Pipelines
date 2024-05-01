@@ -37,6 +37,12 @@ The seurat object should contain a column with the annotated cell type
 - `🟠 Vip`  
 - `🟢 Pvalb`  
 
+| **Cell Type** | **All** | **P10** | **P28** |
+|:-------------:|:-------:|:-------:|:-------:|
+|     Pvalb     |   5025  |   2221  |   2804  |
+|      Sst      |   4377  |   2501  |   1876  |
+|     Lamp5     |   1574  |   647   |   927   |
+|      Vip      |   1521  |   515   |   1006  |
 ```
 Lamp5 <- subset(p10, predicted.subclass == "Lamp5")
 Pvalb <- subset(p10, predicted.subclass == "Pvalb")

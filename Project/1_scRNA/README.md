@@ -144,8 +144,33 @@ seurat_obj <- RunUMAP(seurat_obj,dims=1:30,min.dist=0.3,reduction='pca',reductio
 seurat_obj[["RNA"]] <- JoinLayers(seurat_obj[["RNA"]])
 seurat_obj <- Azimuth::RunAzimuth(seurat_obj, 
           reference = "mousecortexref")
-
 ```
+
 ![picture alt](./content/annotate.png)
 
 
+Number of cells per cell type:
+
+| **Cell Type** | **All** | **P10** | **P28** |
+|:-------------:|:-------:|:-------:|:-------:|
+|     Pvalb     |   5025  |   2221  |   2804  |
+|      Sst      |   4377  |   2501  |   1876  |
+|     Lamp5     |   1574  |   647   |   927   |
+|      Vip      |   1521  |   515   |   1006  |
+|     L5 IT     |   471   |    35   |   436   |
+|    L2/3 IT    |   376   |    36   |   340   |
+|      Sncg     |   290   |   130   |   160   |
+|     L6 CT     |   162   |    18   |   144   |
+|     Oligo     |   156   |    18   |   138   |
+|   Sst Chodl   |   134   |    64   |    70   |
+|     L6 IT     |    84   |    12   |    72   |
+|     Astro     |    72   |    49   |    23   |
+|     L5 ET     |    69   |    14   |    55   |
+|      OPC      |    54   |    34   |    20   |
+|    L5/6 NP    |    22   |    2    |    20   |
+|     Meis2     |    16   |    10   |    6    |
+|      L6b      |    12   |    2    |    10   |
+|   Micro-PVM   |    10   |    4    |    6    |
+|      VLMC     |    9    |    8    |    1    |
+|      Endo     |    3    |    3    |    0    |
+|      Peri     |    1    |    0    |    1    |
