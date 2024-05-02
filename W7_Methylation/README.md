@@ -8,7 +8,7 @@ Godoy-Tena, G., Barmada, A., Morante-Palacios, O. et al. Epigenetic and transcri
 
 ## Cohort and workflow for monocyte purification 
 DNA methylome of peripheral blood monocytes from severe COVID-19 patients and healthy donors. Monocytes were hybridized on MethylationEPIC BeadChip arrays.
-![picture alt](./content/imag/Dataset.png)
+
 
 ## Workflow
 
