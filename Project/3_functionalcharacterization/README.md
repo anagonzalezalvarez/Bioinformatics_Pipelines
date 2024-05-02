@@ -4,6 +4,14 @@
 ## Content
 
 ```
+3_functionalcharacterization
+  ├── code
+  │   ├── FunChar_Sst_Pvalb.R
+  │   └── FunChar_Sst_Vip.R
+  ├── content
+  ├── imag
+  │   └── SST_VIP
+  └── README.md
 
 ```
 
@@ -56,7 +64,7 @@ VIPtoSST_p28 <- subset(robust_all_df_p28, robust_all_df_p28$source == "Vip" & ro
 ```
 
 
-### 3. Visualize number of unique and shared interactions across the two stages of developemnt: p10 and p28
+### 3. Visualize number of unique and shared interactions across the two stages of developemnt p10 and p28 for the two directions
 
 ```
 #--- Sst -> Vip 
@@ -64,7 +72,7 @@ x <- list(p10 = SSTtoVIP_p10$interaction,
           p28 = SSTtoVIP_p28$interaction)
 ggVennDiagram(x[1:2], label = "count", label_alpha = 0, set_size = 6,label_size = 6) + 
   scale_fill_gradient(low = "#F4FAFE", high = "maroon2") +  theme(legend.title = element_text(color = "black"), legend.position = "bottom") + coord_flip()
-  
+
 #----  Vip -> Sst
 x <- list(p10 = VIPtoSST_p10$interaction,
           p28 = VIPtoSST_p28$interaction)
@@ -72,4 +80,83 @@ ggVennDiagram(x[1:2], label = "count", label_alpha = 0, set_size = 6,label_size 
   scale_fill_gradient(low = "#F4FAFE", high = "maroon2") +  theme(legend.title = element_text(color = "black"), legend.position = "bottom") + coord_flip()
 ```
 
-![picture alt](./content/1_vendiagrams.png.png)
+![picture alt](./content/1_venndiagrams.png)
+
+### 4. Subset LIANA output for unique (P10 or P28) and shared interactions 
+```
+#--- SST to VIP
+
+## UNIQUE to p10 (left side of ven plot = 2)
+unique_pairs_SSTtoVIP_p10_inter <- Reduce(setdiff, list(A = SSTtoVIP_p10$interaction, B = SSTtoVIP_p28$interaction))
+unique_pairs_SSTtoVIP_p10_df <- subset(SSTtoVIP_p10, SSTtoVIP_p10$interaction %in% unique_pairs_SSTtoVIP_p10_inter)
+
+## UNIQUE to p28 (right side of ven = 31)
+unique_pairs_SSTtoVIP_p28_inter <- Reduce(setdiff, list(A = SSTtoVIP_p28$interaction, B = SSTtoVIP_p10$interaction))
+unique_pairs_SSTtoVIP_p28_df <- subset(SSTtoVIP_p28, SSTtoVIP_p28$interaction %in% unique_pairs_SSTtoVIP_p28_inter)
+
+## SHARED (middle of ven = 3)
+unique_pairs_SSTtoVIP_shared_inter <- intersect(SSTtoVIP_p10$interaction, SSTtoVIP_p28$interaction)
+unique_pairs_SSTtoVIP_shared_df <- subset(SSTtoVIP_p28, SSTtoVIP_p28$interaction %in% unique_pairs_SSTtoVIP_shared_inter)
+
+#--- VIP to SST 
+## UNIQUE to p10 (left side of ven plot = 3)
+unique_pairs_VIPtoSST_p10_inter <- Reduce(setdiff, list(A = VIPtoSST_p10$interaction, B = VIPtoSST_p28$interaction))
+unique_pairs_VIPtoSST_p10_df <- subset(VIPtoSST_p10, VIPtoSST_p10$interaction %in% unique_pairs_VIPtoSST_p10_inter)
+
+## UNIQUE to p28 (right side of ven plot = 18)
+unique_pairs_VIPtoSST_p28_inter <- Reduce(setdiff, list(A = VIPtoSST_p28$interaction, B = VIPtoSST_p10$interaction))
+unique_pairs_VIPtoSST_p28_df <- subset(VIPtoSST_p28, VIPtoSST_p28$interaction %in% unique_pairs_VIPtoSST_p28_inter)
+
+## no SHARED interactions in VIP to SST
+```
+
+### 5. Visualize data as dotplot `liana_dotplot`
+
+```
+names(unique_pairs_SSTtoVIP_p10_df)[3] <- paste("ligand.complex")  ### rename cols ligand to ligand.complex
+names(unique_pairs_SSTtoVIP_p10_df)[4] <- paste("receptor.complex") 
+liana_dotplot(unique_pairs_SSTtoVIP_p10_df, specificity = "cellphonedb.pvalue", source_groups = c("Sst", "Vip"), target_groups =  c("Sst", "Vip"))
+
+names(unique_pairs_SSTtoVIP_shared_df)[3] <- paste("ligand.complex")
+names(unique_pairs_SSTtoVIP_shared_df)[4] <- paste("receptor.complex")
+liana_dotplot(unique_pairs_SSTtoVIP_shared_df, specificity = "cellphonedb.pvalue", source_groups = c("Sst", "Vip"), target_groups =  c("Sst", "Vip"))
+
+names(unique_pairs_SSTtoVIP_p28_df)[3] <- paste("ligand.complex")
+names(unique_pairs_SSTtoVIP_p28_df)[4] <- paste("receptor.complex")
+liana_dotplot(unique_pairs_SSTtoVIP_p28_df, specificity = "cellphonedb.pvalue", source_groups = c("Sst", "Vip"), target_groups =  c("Sst", "Vip"), ntop = 20)
+```
+![picture alt](./content/2_dotplots.png)
+
+
+### 6. ORA 
+
+1. Get entrez id of all genes `allgenes`
+2. Get entrez id for unique/shared interactions for specific time point (`unique_pairs_SSTtoVIP_p10`,`unique_pairs_SSTtoVIP_p28`,`shared_pairs_SSTtoVIP`)
+3. Do `enrichPathway` 
+
+```
+allgenes <- unique(c(SSTtoVIP_p10$ligand, SSTtoVIP_p10$receptor,
+                    SSTtoVIP_p28$ligand, SSTtoVIP_p28$receptor,
+                    VIPtoSST_p10$ligand, VIPtoSST_p10$receptor,
+                    VIPtoSST_p28$ligand, VIPtoSST_p28$receptor))
+allgenes_entrez <- mapIds(org.Mm.eg.db, keys = allgenes, keytype = "SYMBOL", column = "ENTREZID") 
+
+
+SSTtoVIP_p10_vectors <- paste(SSTtoVIP_p10$ligand, SSTtoVIP_p10$receptor, sep = "-")
+SSTtoVIP_p28_vectors <- paste(SSTtoVIP_p28$ligand, SSTtoVIP_p28$receptor, sep = "-")
+
+#--- SST to VIP
+unique_pairs_SSTtoVIP_p10 <- Reduce(setdiff, list(A = SSTtoVIP_p10_vectors, B = SSTtoVIP_p28_vectors))
+unique_pairs_SSTtoVIP_p28 <- Reduce(setdiff,list(A = SSTtoVIP_p28_vectors, B = SSTtoVIP_p10_vectors))
+shared_pairs_SSTtoVIP <- intersect(SSTtoVIP_p10_vectors, SSTtoVIP_p28_vectors)
+
+genes <- unique(unlist(strsplit(gene_pairs, "-")))
+genes_entrez <- mapIds(org.Mm.eg.db, keys = genes, keytype = "SYMBOL", column = "ENTREZID", multiVals = "first")
+
+  ePath <- enrichPathway(genes_entrez, universe = allgenes_entrez, organism = "mouse", pvalueCutoff = 1, pAdjustMethod = "none", qvalueCutoff = 1, minGSSize = 3, maxGSSize = 500, readable = FALSE)
+  ePath_df <- data.frame(ePath)
+
+
+```
+
+![picture alt](./content/3_pathways.png)
