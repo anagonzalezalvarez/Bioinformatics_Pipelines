@@ -6,7 +6,7 @@
 
  > Task: Prepare an organized pipeline for RNA-seq.
 
-![picture alt](./content/imag/workflow.png)
+![picture alt](./3_ppt/content/imag/workflow.png)
 
 
 ## 1. QUALITY CONTROL `fastQC` `multiqc`
@@ -148,7 +148,7 @@ salmon quant -t genome_fasta.fa --libType A -a s1_sorted_dedup_filt_noMT_cleanch
 #### 2.1 Retrieve gene info from BIOMART
 1. Save gene names into file  `data/biomart/entrez_id.csv`
 2. Query from `BIOMART` https://asia.ensembl.org/info/data/biomart/index.html
-    ![picture alt](./content/imag/biomart.png)
+    ![picture alt](./3_ppt/content/imag/biomart.png)
 3. Save the output into a file and read it in R `data/biomart/gene_info_mart_export_2.txt` ->  `🟣annotgene`
 4. Rename cols so its easier to understand
 
