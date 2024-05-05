@@ -1,0 +1,3 @@
+name,data,assay,metadata,control
+Naive_Tcells,/Users/kurowsaa/Desktop/dea_seurat-main/config/Naive_Tcells_updated.rds,RNA,cytokine.condition,"Th0"
+Memory_Tcells,/Users/kurowsaa/Desktop/dea_seurat-main/config/Memory_Tcells_updated.rds,RNA,cytokine.condition,"Th0"

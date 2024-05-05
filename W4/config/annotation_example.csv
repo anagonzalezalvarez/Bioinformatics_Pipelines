@@ -1,0 +1,2 @@
+name,data,assay,metadata,control
+<testRun>,<data_seurat.rds>,<RNA>,<clusterIdColName>,<refCluster>

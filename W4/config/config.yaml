@@ -1,0 +1,44 @@
+
+# alwayse use absolute paths
+
+##### RESOURCES #####
+mem: '32000'
+threads: 2
+partition: 'shortq'
+
+##### GENERAL #####
+annotation: /Users/kurowsaa/Desktop/dea_seurat-main/config/annotation.csv
+result_path: /Users/kurowsaa/Desktop/dea_seurat-main/test_data/Group3_results
+project_name: MyData
+
+##### DEA #####
+
+# parameters for https://satijalab.org/seurat/reference/findmarkers
+logfc_threshold: 0.1
+test_use: "wilcox"
+min_pct: 0.1
+
+# additional parameter for https://satijalab.org/seurat/reference/findallmarkers
+return_thresh: 1
+
+##### AGGREGATION #####
+# score_formula is used to calculate a score for each gene and comparison (group) that can be used downstream e.g., for preranked GSEA
+# eval based score calculation -> eval(parse(text=" "))
+# DEA result dataframe is called: dea_results
+# available numerical columns: p_val, avg_log2FC, pct.1, pct.2, p_val_adj
+# common/popular example: "-log10(dea_results$p_val)*sign(dea_results$logFC)"
+# if not used leave empty: ""
+score_formula: "-log10(dea_results$p_val)*sign(dea_results$avg_log2FC)"
+
+# filters are applied to the DEA results and used for all outputs
+filters:
+    adj_pval: 0.05
+    lfc: 0.1
+    min_pct: 0.1
+
+##### VISUALIZATION #####
+
+# parameters for https://bioconductor.org/packages/release/bioc/html/EnhancedVolcano.html
+volcano:
+    pCutoff: 0.05
+    FCcutoff: 0.1
