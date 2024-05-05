@@ -19,7 +19,6 @@ We provide a subset of cells from the following human T-Cell dataset as test cas
 
 Cano-Gamez, E., Soskic, B., Roumeliotis, T.I. et al. Single-cell transcriptomics identifies an effectorness gradient shaping the response of CD4+ T cells to cytokines. Nat Commun 11, 1801 (2020). https://doi.org/10.1038/s41467-020-15543-y
 
-![image](/test_data/Cano-Gamez2020_Fig1.png)
 
 This work examines the transcriptional patterns of human naïve and memory CD4+ T cells to show that responses to cytokines differ substantially between these cell types. The analysis of the different data modalities is documented in the following repository:
 https://github.com/eddiecg/T-cell-effectorness
